@@ -1,0 +1,97 @@
+env:
+  PANTS_CONFIG_FILES: "['pants.toml', 'pants.ci.toml']"
+  BUILDKITE_PLUGIN_VAULT_ENV_SECRET_PREFIX: "secret/data/buildkite/env"
+
+steps:
+
+  - label: ":lint-roller::bash: Lint Bash"
+    command:
+      - make lint-bash
+    # plugins:
+    #   - grapl-security/vault-login#v0.1.0
+    #   - grapl-security/vault-env#v0.1.0:
+    #       secrets:
+    #         - cloudsmith-login-buildkite-plugin/TOOLCHAIN_AUTH_TOKEN
+
+  - label: ":lint-roller::docker: Lint Dockerfile"
+    command:
+      - make lint-docker
+
+  - label: ":lint-roller: Lint HCL"
+    command:
+      - make lint-hcl
+
+  - label: ":lint-roller::buildkite: Lint Plugin"
+    command:
+      - make lint-plugin
+
+  - label: ":bash: Unit Test Bash"
+    command:
+      - make test-bash
+    # plugins:
+    #   - grapl-security/vault-login#v0.1.0
+    #   - grapl-security/vault-env#v0.1.0:
+    #       secrets:
+    #         - vault-login-buildkite-plugin/TOOLCHAIN_AUTH_TOKEN
+
+  - label: ":docker: Build Image"
+    command:
+      - make image
+
+  ########################################################################
+
+  - wait
+
+  - label: ":cloudsmith::docker: Upload testing container"
+    key: test-upload
+    command:
+      - docker buildx bake testing --push
+    plugins:
+      - grapl-security/vault-login#v0.1.0
+      - grapl-security/vault-env#v0.1.0:
+          secrets:
+            - CLOUDSMITH_API_KEY
+      - docker-login#v2.0.1:
+          username: grapl-cicd
+          password-env: CLOUDSMITH_API_KEY
+          server: docker.cloudsmith.io
+    agents:
+      queue: "docker"
+
+  - label: ":cloudsmith::buildkite: Promotion Test"
+    key: promotion-test
+    depends_on: test-upload
+    plugins:
+      - grapl-security/vault-login#v0.1.0
+      - grapl-security/vault-env#v0.1.0:
+          secrets:
+            - CLOUDSMITH_API_KEY
+      - grapl-security/cloudsmith#${BUILDKITE_COMMIT}:
+          # See contents of the
+          # `cloudsmith-buildkite-plugin-verify-test` target in
+          # `docker-bake.hcl` for where these values come from.
+          promote:
+            org: grapl
+            from: testing-stage1
+            to: testing-stage2
+            packages:
+              cloudsmith-buildkite-plugin-verify-test: ${BUILDKITE_BUILD_ID}
+    agents:
+      queue: "docker"  # could also be artifact-uploaders
+
+
+  - label: ":cloudsmith::white_check_mark: Verify Promotion"
+    key: verify-promotion
+    depends_on: promotion-test
+    command:
+      - .buildkite/scripts/verify_promotion.sh
+    plugins:
+      - grapl-security/vault-login#v0.1.0
+      - grapl-security/vault-env#v0.1.0:
+          secrets:
+            - CLOUDSMITH_API_KEY
+    agents:
+      queue: "docker"  # could also be artifact-uploaders
+
+   # TODO: Need to verify that this works with a file, too
+   # TODO: Need to verify that this works with multiple artifacts, too

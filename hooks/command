@@ -1,0 +1,33 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+# shellcheck source-path=SCRIPTDIR
+source "$(dirname "${BASH_SOURCE[0]}")/../lib/cloudsmith.sh"
+# shellcheck source-path=SCRIPTDIR
+source "$(dirname "${BASH_SOURCE[0]}")/../lib/configuration.sh"
+# shellcheck source-path=SCRIPTDIR
+source "$(dirname "${BASH_SOURCE[0]}")/../lib/ops.sh"
+# shellcheck source-path=SCRIPTDIR
+source "$(dirname "${BASH_SOURCE[0]}")/../lib/log.sh"
+
+# Because of the current structure of the configuration object, it's
+# easier to deal with pulling the configuration values from JSON,
+# rather than environment variables, as is normally seen in Buildkite plugins.
+
+configuration=$(plugin_configuration)
+packages=$(get_packages "${configuration}")
+
+cloudsmith_org=$(get_org "${configuration}")
+from_repo=$(get_from "${configuration}")
+to_repo=$(get_to "${configuration}")
+
+queries=("$(packages_to_queries "${packages}")")
+
+echo "--- :cloudsmith: Promoting packages from ${cloudsmith_org}/${from_repo} to ${cloudsmith_org}/${to_repo}"
+
+for query in "${queries[@]}"; do
+    echo "--- :cloudsmith: Processing query '${query}'"
+    slug="$(get_unique_identifier "${cloudsmith_org}" "${from_repo}" "${query}")"
+    promote "${cloudsmith_org}" "${from_repo}" "${to_repo}" "${slug}"
+done

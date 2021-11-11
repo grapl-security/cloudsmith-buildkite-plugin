@@ -1,0 +1,45 @@
+version: "3.8"
+
+x-common-variables:
+  read-only-workdir: &read-only-workdir
+    type: bind
+    source: .
+    target: /workdir
+    read_only: true
+  read-write-workdir: &read-write-workdir
+    type: bind
+    source: .
+    target: /workdir
+    read_only: false
+  read-only-plugin: &read-only-plugin
+    # Buildkite containers assume you mount into /plugin
+    type: bind
+    source: .
+    target: /plugin
+    read_only: true
+
+services:
+  hcl-formatter:
+    image: docker.cloudsmith.io/grapl/releases/hcl-formatter:latest
+    command: format
+    volumes:
+      - *read-write-workdir
+
+  hcl-linter:
+    image: docker.cloudsmith.io/grapl/releases/hcl-formatter:latest
+    command: lint
+    volumes:
+      - *read-only-workdir
+
+  hadolint:
+    image: hadolint/hadolint:2.6.0-debian
+    command: [ "hadolint", "Dockerfile", "Dockerfile.testing" ]
+    working_dir: /workdir
+    volumes:
+      - *read-only-workdir
+
+  plugin-linter:
+    image: buildkite/plugin-linter:latest # the only available tag
+    command: ["--id", "grapl-security/cloudsmith"]
+    volumes:
+      - *read-only-plugin

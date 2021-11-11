@@ -1,0 +1,61 @@
+---
+name: cloudsmith
+description: Interact with Cloudsmith package repositories
+author: https://github.com/grapl-security
+requirements:
+  - docker
+  - jq
+configuration:
+  properties:
+    image:
+      description: |
+        The `cloudsmith-cli` image to use; defaults to
+        `docker.cloudsmith.io/grapl/releases/cloudsmith-cli` (there
+        isn't an official one yet).
+      type: string
+    tag:
+      description: |
+        The cloudsmith-cli image to use; defaults to `latest`.
+      type: string
+    promote:
+      description: |
+        Configuration for package promotions from one repository to
+        another.
+      type: object
+      properties:
+        org:
+          description: |
+            The Cloudsmith organization to interact with.
+          type: string
+        from:
+          description: |
+            The repository to promote packages from. It must be within
+            the configured organization.
+          type: string
+        to:
+          description: |
+            The repository to promote packages to. It must also be
+            within the configured organization.
+          type: string
+        packages:
+          description: |
+            A mapping of package name to package version. These will
+            be the packages that are promoted.
+          type: object
+        packages_file:
+          description: |
+            A file to read packages from. Contains a JSON object of
+            the same structure as the `packages` key. Preferred over
+            `packages` if both are present.
+          type: string
+      allOf:
+        - required: [org, from, to]
+        - oneOf:
+            # One of `packages` or `packages_file` is required, but
+            # not both, and not neither.
+            - required: [packages]
+            - required: [packages_file]
+  # For now, "promote" is required. We'll leave "space" in the
+  # configuration for future operations.
+  required: [promote]
+  additionalProperties: false
