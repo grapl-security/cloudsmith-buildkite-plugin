@@ -13,9 +13,14 @@ steps:
           secrets:
             - cloudsmith-buildkite-plugin/TOOLCHAIN_AUTH_TOKEN
 
-  - label: ":lint-roller::docker: Lint Dockerfile"
+  - label: ":lint-roller::docker: Lint Dockerfiles"
     command:
       - make lint-docker
+    plugins:
+      - grapl-security/vault-login#v0.1.0
+      - grapl-security/vault-env#v0.1.0:
+          secrets:
+            - cloudsmith-buildkite-plugin/TOOLCHAIN_AUTH_TOKEN
 
   - label: ":lint-roller: Lint HCL"
     command:
