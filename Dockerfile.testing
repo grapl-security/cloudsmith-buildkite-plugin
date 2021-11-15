@@ -1,0 +1,9 @@
+FROM alpine:3.14
+
+ARG BUILDKITE_BUILD_ID
+ENV BUILDKITE_BUILD_ID="${BUILDKITE_BUILD_ID}"
+
+# Using shell form rather than exec form (i.e., `[...]`) so we get
+# expansion of the variable.
+# hadolint ignore=DL3025
+CMD echo "Built for testing in Buildkite run: ${BUILDKITE_BUILD_ID}"
