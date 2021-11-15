@@ -7,11 +7,11 @@ steps:
   - label: ":lint-roller::bash: Lint Bash"
     command:
       - make lint-bash
-    # plugins:
-    #   - grapl-security/vault-login#v0.1.0
-    #   - grapl-security/vault-env#v0.1.0:
-    #       secrets:
-    #         - cloudsmith-login-buildkite-plugin/TOOLCHAIN_AUTH_TOKEN
+    plugins:
+      - grapl-security/vault-login#v0.1.0
+      - grapl-security/vault-env#v0.1.0:
+          secrets:
+            - cloudsmith-buildkite-plugin/TOOLCHAIN_AUTH_TOKEN
 
   - label: ":lint-roller::docker: Lint Dockerfile"
     command:
@@ -28,11 +28,11 @@ steps:
   - label: ":bash: Unit Test Bash"
     command:
       - make test-bash
-    # plugins:
-    #   - grapl-security/vault-login#v0.1.0
-    #   - grapl-security/vault-env#v0.1.0:
-    #       secrets:
-    #         - vault-login-buildkite-plugin/TOOLCHAIN_AUTH_TOKEN
+    plugins:
+      - grapl-security/vault-login#v0.1.0
+      - grapl-security/vault-env#v0.1.0:
+          secrets:
+            - cloudsmith-buildkite-plugin/TOOLCHAIN_AUTH_TOKEN
 
   - label: ":docker: Build Image"
     command:
@@ -92,6 +92,3 @@ steps:
             - CLOUDSMITH_API_KEY
     agents:
       queue: "docker"  # could also be artifact-uploaders
-
-   # TODO: Need to verify that this works with a file, too
-   # TODO: Need to verify that this works with multiple artifacts, too
