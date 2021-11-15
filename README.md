@@ -134,3 +134,11 @@ Cannot be used if `packages` is used.
 Requires `make`, `docker`, and `docker-compose`.
 
 Running `make` will run all formatting, linting, and testing.
+
+### Testing Considerations
+
+Part of exercising this plugin involves pushing a test container to
+one repository (`testing-stage1`) and promoting it to another
+(`testing-stage2`). These two repositories exist in our Cloudsmith
+account solely for this purpose, and this repository is the only thing
+that will be putting anything into them.
