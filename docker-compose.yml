@@ -31,13 +31,6 @@ services:
     volumes:
       - *read-only-workdir
 
-  hadolint:
-    image: hadolint/hadolint:2.6.0-debian
-    command: [ "hadolint", "Dockerfile", "Dockerfile.testing" ]
-    working_dir: /workdir
-    volumes:
-      - *read-only-workdir
-
   plugin-linter:
     image: buildkite/plugin-linter:latest # the only available tag
     command: ["--id", "grapl-security/cloudsmith"]

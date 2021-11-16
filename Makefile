@@ -26,7 +26,7 @@ lint: lint-docker lint-hcl lint-bash lint-plugin
 
 .PHONY: lint-docker
 lint-docker:
-	${RUN_CHECK} hadolint
+	./pants filter --target-type=docker_image :: | xargs ./pants lint
 
 .PHONY: lint-hcl
 lint-hcl:
@@ -34,7 +34,7 @@ lint-hcl:
 
 .PHONY: lint-bash
 lint-bash:
-	./pants lint ::
+	./pants filter --target-type=shell_sources,shunit2_tests :: | xargs ./pants lint
 
 .PHONY: lint-plugin
 lint-plugin:
