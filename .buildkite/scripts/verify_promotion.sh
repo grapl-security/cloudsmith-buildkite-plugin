@@ -13,7 +13,13 @@ source "$(dirname "${BASH_SOURCE[0]}")/../../lib/ops.sh"
 # shellcheck source-path=SCRIPTDIR
 source "$(dirname "${BASH_SOURCE[0]}")/../../lib/log.sh"
 
-readonly image_name="cloudsmith-buildkite-plugin-verify-test"
+# The particular image we're querying will depend on whether we're in
+# the verify pipeline or the merge pipeline; see
+# docker-bake.testing.hcl for possible values.
+readonly image_name="${1}"
+
+# All images are expected to be tagged with the current build ID,
+# however (also defined in docker-bake.testing.hcl).
 readonly image_tag="${BUILDKITE_BUILD_ID}"
 readonly fully_qualified_image_name="${image_name}:${image_tag}"
 

@@ -1,0 +1,25 @@
+---
+env:
+  PANTS_CONFIG_FILES: "['pants.toml', 'pants.ci.toml']"
+  BUILDKITE_PLUGIN_VAULT_ENV_SECRET_PREFIX: "secret/data/buildkite/env"
+
+steps:
+
+  - label: ":thinking_face: Build Cloudsmith Container?"
+    plugins:
+      - chronotc/monorepo-diff#v2.0.4:
+          diff: .buildkite/shared/scripts/diff.sh
+          log_level: "debug"
+          watch:
+            - path:
+                - Dockerfile
+                - docker-bake.hcl
+              config:
+                label: ":pipeline: Upload pipeline"
+                command: "buildkite-agent pipeline upload .buildkite/pipeline.merge.build-container.yml"
+
+  - wait
+
+  - label: ":writing_hand: Record successful build"
+    command:
+      - .buildkite/shared/steps/record_successful_pipeline_run.sh
