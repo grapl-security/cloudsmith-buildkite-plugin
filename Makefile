@@ -34,7 +34,7 @@ lint-hcl:
 
 .PHONY: lint-bash
 lint-bash:
-	./pants filter --target-type=shell_library,shunit2_tests :: | xargs ./pants lint
+	./pants filter --target-type=shell_sources,shunit2_tests :: | xargs ./pants lint
 
 .PHONY: lint-plugin
 lint-plugin:
