@@ -47,53 +47,10 @@ steps:
 
   - wait
 
-  - label: ":cloudsmith::docker: Upload 'move' testing container"
-    key: test-upload
+  - label: ":pipeline: Testing the 'move' promotion"
     command:
-      - docker buildx bake verify-move-image --file=docker-bake.testing.hcl --push
-    plugins:
-      - grapl-security/vault-login#v0.1.0
-      - grapl-security/vault-env#v0.1.0:
-          secrets:
-            - CLOUDSMITH_API_KEY
-      - docker-login#v2.0.1:
-          username: grapl-cicd
-          password-env: CLOUDSMITH_API_KEY
-          server: docker.cloudsmith.io
-    agents:
-      queue: "docker"
+      - ".buildkite/pipeline.plugin-test.sh move | buildkite-agent pipeline upload"
 
-  - label: ":cloudsmith::buildkite: Promotion Test (move)"
-    key: promotion-test
-    depends_on: test-upload
-    plugins:
-      - grapl-security/vault-login#v0.1.0
-      - grapl-security/vault-env#v0.1.0:
-          secrets:
-            - CLOUDSMITH_API_KEY
-      - grapl-security/cloudsmith#${BUILDKITE_COMMIT}:
-          # See contents of the `verify-move-image` target in
-          # `docker-bake.testing.hcl` for where these values come
-          # from.
-          promote:
-            org: grapl
-            from: testing-stage1
-            to: testing-stage2
-            packages:
-              cloudsmith-buildkite-plugin-verify-move-test: ${BUILDKITE_BUILD_ID}
-    agents:
-      queue: "docker"
-
-
-  - label: ":cloudsmith::white_check_mark: Verify Promotion (move)"
-    key: verify-promotion
-    depends_on: promotion-test
+  - label: ":pipeline: Testing the 'copy' promotion"
     command:
-      - .buildkite/scripts/verify_promotion.sh "cloudsmith-buildkite-plugin-verify-move-test" "move"
-    plugins:
-      - grapl-security/vault-login#v0.1.0
-      - grapl-security/vault-env#v0.1.0:
-          secrets:
-            - CLOUDSMITH_API_KEY
-    agents:
-      queue: "docker"
+      - ".buildkite/pipeline.plugin-test.sh copy | buildkite-agent pipeline upload"

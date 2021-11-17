@@ -23,6 +23,15 @@ configuration:
         another.
       type: object
       properties:
+        action:
+          description: |
+            Defines the semantics of the promotion operation with respect to the
+            source repository; "move" removes the package(s) from the source
+            repository, while "copy" leaves a copy behind. In both cases, the
+            package(s) will be present in the destination repository.
+          type: string
+          enum: ["move", "copy"]
+          default: "move"
         org:
           description: |
             The Cloudsmith organization to interact with.

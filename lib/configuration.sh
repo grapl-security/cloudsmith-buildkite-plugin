@@ -49,6 +49,18 @@ get_to() {
     _get_configuration_value ".promote.to" "${1}"
 }
 
+get_action() {
+    if action=$(_get_configuration_value ".promote.action" "${1}" 2> /dev/null); then
+        if [[ "${action}" == "move" || "${action}" == "copy" ]]; then
+            echo "${action}"
+        else
+            raise_error "Invalid action: '${action}'"
+        fi
+    else
+        echo "move" # default value
+    fi
+}
+
 _get_configuration_value() {
     local -r _key_path="${1}"
     local -r _config="${2}"

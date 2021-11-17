@@ -72,6 +72,26 @@ for how the packages are specified.
 You must specify either `packages` or `packages_file`; you cannot have
 both, but you must have one.
 
+By default, the plugin will move packages from one repository to the
+other, removing them from the source repository in the process. If you
+need to retain the packages in the source repository, you can specify
+an `action` of `copy`:
+
+```yaml
+steps:
+  - label: ":cloudsmith: Promote Packages for Release"
+    plugins:
+      - grapl-security/cloudsmith#v0.1.0:
+          promote:
+            org: my-company
+            from: testing
+            to: releases
+            action: copy
+            packages:
+              frontend: v1.2.3
+              backend: v2.3.4
+```
+
 ## Docker Image
 
 For flexibility, this plugin uses a containerized Cloudsmith CLI,
@@ -102,6 +122,14 @@ Defaults to `latest`.
 ### promote (required, object)
 
 The configuration object for the promotion operation.
+
+#### action (optional, string)
+Defines the semantics of the promotion operation with respect to the
+source repository; "move" removes the package(s) from the source
+repository, while "copy" leaves a copy behind. In both cases, the
+package(s) will be present in the destination repository.
+
+Must be either "move" or "copy"; defaults to "move".
 
 #### org (required, string)
 
