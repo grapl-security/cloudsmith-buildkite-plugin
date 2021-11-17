@@ -47,10 +47,10 @@ steps:
 
   - wait
 
-  - label: ":cloudsmith::docker: Upload testing container"
+  - label: ":cloudsmith::docker: Upload 'move' testing container"
     key: test-upload
     command:
-      - docker buildx bake verify-image --file=docker-bake.testing.hcl --push
+      - docker buildx bake verify-move-image --file=docker-bake.testing.hcl --push
     plugins:
       - grapl-security/vault-login#v0.1.0
       - grapl-security/vault-env#v0.1.0:
@@ -63,7 +63,7 @@ steps:
     agents:
       queue: "docker"
 
-  - label: ":cloudsmith::buildkite: Promotion Test"
+  - label: ":cloudsmith::buildkite: Promotion Test (move)"
     key: promotion-test
     depends_on: test-upload
     plugins:
@@ -72,7 +72,7 @@ steps:
           secrets:
             - CLOUDSMITH_API_KEY
       - grapl-security/cloudsmith#${BUILDKITE_COMMIT}:
-          # See contents of the `verify-image` target in
+          # See contents of the `verify-move-image` target in
           # `docker-bake.testing.hcl` for where these values come
           # from.
           promote:
@@ -80,20 +80,20 @@ steps:
             from: testing-stage1
             to: testing-stage2
             packages:
-              cloudsmith-buildkite-plugin-verify-test: ${BUILDKITE_BUILD_ID}
+              cloudsmith-buildkite-plugin-verify-move-test: ${BUILDKITE_BUILD_ID}
     agents:
-      queue: "docker"  # could also be artifact-uploaders
+      queue: "docker"
 
 
-  - label: ":cloudsmith::white_check_mark: Verify Promotion"
+  - label: ":cloudsmith::white_check_mark: Verify Promotion (move)"
     key: verify-promotion
     depends_on: promotion-test
     command:
-      - .buildkite/scripts/verify_promotion.sh "cloudsmith-buildkite-plugin-verify-test"
+      - .buildkite/scripts/verify_promotion.sh "cloudsmith-buildkite-plugin-verify-move-test" "move"
     plugins:
       - grapl-security/vault-login#v0.1.0
       - grapl-security/vault-env#v0.1.0:
           secrets:
             - CLOUDSMITH_API_KEY
     agents:
-      queue: "docker"  # could also be artifact-uploaders
+      queue: "docker"

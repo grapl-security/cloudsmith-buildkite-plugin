@@ -26,7 +26,7 @@ steps:
   - label: ":cloudsmith::docker: Upload testing container"
     key: test-upload
     command:
-      - docker buildx bake merge-image --file=docker-bake.testing.hcl --push
+      - docker buildx bake merge-move-image --file=docker-bake.testing.hcl --push
     plugins:
       - grapl-security/vault-login#v0.1.0
       - grapl-security/vault-env#v0.1.0:
@@ -39,7 +39,7 @@ steps:
     agents:
       queue: "docker"
 
-  - label: ":cloudsmith::buildkite: Promotion Test"
+  - label: ":cloudsmith::buildkite: Promotion Test (move)"
     key: promotion-test
     depends_on: test-upload
     plugins:
@@ -48,7 +48,7 @@ steps:
           secrets:
             - CLOUDSMITH_API_KEY
       - grapl-security/cloudsmith#${BUILDKITE_COMMIT}:
-          # See contents of the `merge-image` target in
+          # See contents of the `merge-move-image` target in
           # `docker-bake.testing.hcl` for where these values come from.
           promote:
             # Use the image we just built to drive this
@@ -58,22 +58,22 @@ steps:
             from: testing-stage1
             to: testing-stage2
             packages:
-              cloudsmith-buildkite-plugin-merge-test: ${BUILDKITE_BUILD_ID}
+              cloudsmith-buildkite-plugin-merge-move-test: ${BUILDKITE_BUILD_ID}
     agents:
       queue: "docker"  # could also be artifact-uploaders
 
-  - label: ":cloudsmith::white_check_mark: Verify Promotion"
+  - label: ":cloudsmith::white_check_mark: Verify Promotion (move)"
     key: verify-promotion
     depends_on: promotion-test
     command:
-      - .buildkite/scripts/verify_promotion.sh "cloudsmith-buildkite-plugin-merge-test"
+      - .buildkite/scripts/verify_promotion.sh "cloudsmith-buildkite-plugin-merge-move-test" "move"
     plugins:
       - grapl-security/vault-login#v0.1.0
       - grapl-security/vault-env#v0.1.0:
           secrets:
             - CLOUDSMITH_API_KEY
     agents:
-      queue: "docker"  # could also be artifact-uploaders
+      queue: "docker"
 
   - wait
 
@@ -91,4 +91,4 @@ steps:
             packages:
               cloudsmith-cli: latest
     agents:
-      queue: "docker"  # could also be artifact-uploaders
+      queue: "docker"
