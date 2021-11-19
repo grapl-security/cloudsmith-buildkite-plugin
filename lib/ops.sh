@@ -61,9 +61,24 @@ promote() {
     local -r _from_repo="${2}"
     local -r _to_repo="${3}"
     local -r _slug="${4}"
+    local -r _action="${5}"
 
-    cloudsmith promote \
-        --yes \
-        "${_org}/${_from_repo}/${_slug}" \
-        "${_to_repo}"
+    case "${_action}" in
+        move)
+            cloudsmith move \
+                --yes \
+                "${_org}/${_from_repo}/${_slug}" \
+                "${_to_repo}"
+            ;;
+        copy)
+            cloudsmith copy \
+                "${_org}/${_from_repo}/${_slug}" \
+                "${_to_repo}"
+            ;;
+        *)
+            # Note: we should never get here because this value should
+            # have been validated elsewhere
+            raise_error "Invalid action '${_action}'\nIf you are seeing this message, please report it as a bug!"
+            ;;
+    esac
 }

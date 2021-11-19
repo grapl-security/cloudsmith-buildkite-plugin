@@ -209,15 +209,30 @@ EOF
         "${actual}"
 }
 
-test_promote() {
+test_promote_move() {
 
     expected_commands=$(
         cat << EOF
-cloudsmith promote --yes schmapl/bucket-o-stuff/8QzX5yKpxFLz validated-bucket-o-stuff
+cloudsmith move --yes schmapl/bucket-o-stuff/8QzX5yKpxFLz validated-bucket-o-stuff
 EOF
     )
 
-    promote schmapl bucket-o-stuff validated-bucket-o-stuff 8QzX5yKpxFLz
+    promote schmapl bucket-o-stuff validated-bucket-o-stuff 8QzX5yKpxFLz move
+
+    assertEquals "The expected cloudsmith commands were not run" \
+        "${expected_commands}" \
+        "$(recorded_commands)"
+}
+
+test_promote_copy() {
+
+    expected_commands=$(
+        cat << EOF
+cloudsmith copy schmapl/bucket-o-stuff/8QzX5yKpxFLz validated-bucket-o-stuff
+EOF
+    )
+
+    promote schmapl bucket-o-stuff validated-bucket-o-stuff 8QzX5yKpxFLz copy
 
     assertEquals "The expected cloudsmith commands were not run" \
         "${expected_commands}" \

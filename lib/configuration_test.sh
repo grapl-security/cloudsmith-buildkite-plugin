@@ -163,3 +163,23 @@ test_get_to_fails_with_missing_value() {
     expected_error_message="Expected value at '.promote.to'"
     assertContains "Did not find expected message in '${actual}'" "${actual}" "${expected_error_message}"
 }
+
+test_get_action_works() {
+    actual="$(get_action '{"promote": {"org": "my-org", "from": "source-repo", "to": "dest-repo", "action": "copy"}}')"
+    expected="copy"
+    assertEquals "${expected}" "${actual}"
+}
+
+test_get_action_defaults_to_move_with_with_missing_value() {
+    actual="$(get_action '{"promote": {"org": "my-org", "from": "source-repo"}}')"
+    assertEquals "'get_action' should have succeeded" 0 $?
+    expected="move"
+    assertEquals "${expected}" "${actual}"
+}
+
+test_get_action_fails_with_invalid_value() {
+    actual="$(get_action '{"promote": {"org": "my-org", "from": "source-repo", "action": "monkeys"}}' 2>&1)"
+    assertEquals "'get_action' should have failed" 1 $?
+    expected_error_message="Invalid action: 'monkeys'"
+    assertContains "Did not find expected message in '${actual}'" "${actual}" "${expected_error_message}"
+}

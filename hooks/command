@@ -18,16 +18,17 @@ source "$(dirname "${BASH_SOURCE[0]}")/../lib/log.sh"
 configuration=$(plugin_configuration)
 packages=$(get_packages "${configuration}")
 
+action=$(get_action "${configuration}")
 cloudsmith_org=$(get_org "${configuration}")
 from_repo=$(get_from "${configuration}")
 to_repo=$(get_to "${configuration}")
 
 queries=("$(packages_to_queries "${packages}")")
 
-echo "--- :cloudsmith: Promoting packages from ${cloudsmith_org}/${from_repo} to ${cloudsmith_org}/${to_repo}"
+echo "--- :cloudsmith: Promoting packages from ${cloudsmith_org}/${from_repo} to ${cloudsmith_org}/${to_repo} via ${action}"
 
 for query in "${queries[@]}"; do
     echo "--- :cloudsmith: Processing query '${query}'"
     slug="$(get_unique_identifier "${cloudsmith_org}" "${from_repo}" "${query}")"
-    promote "${cloudsmith_org}" "${from_repo}" "${to_repo}" "${slug}"
+    promote "${cloudsmith_org}" "${from_repo}" "${to_repo}" "${slug}" "${action}"
 done

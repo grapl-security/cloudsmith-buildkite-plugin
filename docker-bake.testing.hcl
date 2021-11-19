@@ -19,18 +19,38 @@ target "base" {
   }
 }
 
-# Use this image in the verify pipeline for testing.
-target "verify-image" {
+# Use this image in the verify pipeline for testing the plugin's
+# "move" semantics.
+target "verify-move-image" {
   inherits = ["base"]
   tags = [
-    "docker.cloudsmith.io/grapl/testing-stage1/cloudsmith-buildkite-plugin-verify-test:${BUILDKITE_BUILD_ID}"
+    "docker.cloudsmith.io/grapl/testing-stage1/cloudsmith-buildkite-plugin-verify-move-test:${BUILDKITE_BUILD_ID}"
   ]
 }
 
-# Use this image in the merge pipeline for testing.
-target "merge-image" {
+# Use this image in the merge pipeline for testing the plugin's "move"
+# semantics..
+target "merge-move-image" {
   inherits = ["base"]
   tags = [
-    "docker.cloudsmith.io/grapl/testing-stage1/cloudsmith-buildkite-plugin-merge-test:${BUILDKITE_BUILD_ID}"
+    "docker.cloudsmith.io/grapl/testing-stage1/cloudsmith-buildkite-plugin-merge-move-test:${BUILDKITE_BUILD_ID}"
+  ]
+}
+
+# Use this image in the verify pipeline for testing the plugin's
+# "copy" semantics.
+target "verify-copy-image" {
+  inherits = ["base"]
+  tags = [
+    "docker.cloudsmith.io/grapl/testing-stage1/cloudsmith-buildkite-plugin-verify-copy-test:${BUILDKITE_BUILD_ID}"
+  ]
+}
+
+# Use this image in the merge pipeline for testing the plugin's "copy"
+# semantics..
+target "merge-copy-image" {
+  inherits = ["base"]
+  tags = [
+    "docker.cloudsmith.io/grapl/testing-stage1/cloudsmith-buildkite-plugin-merge-copy-test:${BUILDKITE_BUILD_ID}"
   ]
 }
