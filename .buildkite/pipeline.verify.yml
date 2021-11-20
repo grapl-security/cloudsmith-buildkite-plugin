@@ -39,6 +39,10 @@ steps:
           secrets:
             - cloudsmith-buildkite-plugin/TOOLCHAIN_AUTH_TOKEN
 
+  - label: ":buildkite::bash: Unit Test Plugin"
+    command:
+      - make test-plugin
+
   - label: ":docker: Build Image"
     command:
       - make image
