@@ -43,11 +43,15 @@ lint-plugin:
 # Testing
 ########################################################################
 .PHONY: test
-test: test-bash
+test: test-bash test-plugin
 
 .PHONY: test-bash
 test-bash:
 	./pants test ::
+
+.PHONY: test-plugin
+test-plugin:
+	${RUN_CHECK} plugin-tester
 
 # Containers
 ########################################################################

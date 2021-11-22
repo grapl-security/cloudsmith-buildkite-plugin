@@ -36,3 +36,8 @@ services:
     command: ["--id", "grapl-security/cloudsmith"]
     volumes:
       - *read-only-plugin
+
+  plugin-tester:
+    image: buildkite/plugin-tester:latest # the only available tag
+    volumes:
+      - *read-only-plugin
