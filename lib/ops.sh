@@ -4,14 +4,19 @@
 source "$(dirname "${BASH_SOURCE[0]}")/log.sh"
 
 # Generate a series of Cloudsmith query strings to use in `cloudsmith
-# package list` call
+# package list` call.
+#
+# Note that we wrap both the name and the version in anchors (`^...$`)
+# to force them to match exactly. Otherwise, you can end up with
+# multiple results if you have similarly-named packages with the same
+# version (e.g. "foo 1.2.3" and "foobar 1.2.3").
 packages_to_queries() {
     local -r _packages="${1}"
 
     jq --raw-output --exit-status '
         to_entries
         | .[]
-        | "name:" + .key + " " + "version:" + .value' \
+        | "name:^" + .key + "$ " + "version:^" + .value + "$"' \
         <<< "${_packages}" ||
         raise_error "Problem converting package specifications to Cloudsmith query strings:\n${_packages}"
 }

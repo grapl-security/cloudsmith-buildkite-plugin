@@ -40,14 +40,14 @@ EOF
            )
 
     stub docker \
-         "${CLOUDSMITH} list packages grapl/raw --query=\"name:foo version:1.2.3\" --output-format=json : echo '{\"data\": [{\"slug_perm\": \"fooXXX\"}]}'" \
+         "${CLOUDSMITH} list packages grapl/raw --query=\"name:^foo$ version:^1.2.3$\" --output-format=json : echo '{\"data\": [{\"slug_perm\": \"fooXXX\"}]}'" \
          "${CLOUDSMITH} move --yes grapl/raw/fooXXX releases : echo 'Moved foo'" \
 
     run "${PWD}/hooks/command"
     assert_success
 
     assert_output --partial "Promoting packages from grapl/raw to grapl/releases via move"
-    assert_output --partial "Processing query 'name:foo version:1.2.3'"
+    assert_output --partial "Processing query 'name:^foo$ version:^1.2.3$'"
     assert_output --partial "Moved foo"
 
     unstub docker
@@ -76,20 +76,20 @@ EOF
            )
 
     stub docker \
-         "${CLOUDSMITH} list packages grapl/raw --query=\"name:foo version:1.2.3\" --output-format=json : echo '{\"data\": [{\"slug_perm\": \"fooXXX\"}]}'" \
+         "${CLOUDSMITH} list packages grapl/raw --query=\"name:^foo$ version:^1.2.3$\" --output-format=json : echo '{\"data\": [{\"slug_perm\": \"fooXXX\"}]}'" \
          "${CLOUDSMITH} move --yes grapl/raw/fooXXX releases : echo 'Moved foo'" \
-         "${CLOUDSMITH} list packages grapl/raw --query=\"name:bar version:2.3.4\" --output-format=json : echo '{\"data\": [{\"slug_perm\": \"barXXX\"}]}'" \
+         "${CLOUDSMITH} list packages grapl/raw --query=\"name:^bar$ version:^2.3.4$\" --output-format=json : echo '{\"data\": [{\"slug_perm\": \"barXXX\"}]}'" \
          "${CLOUDSMITH} move --yes grapl/raw/barXXX releases : echo 'Moved bar'" \
-         "${CLOUDSMITH} list packages grapl/raw --query=\"name:baz version:3.4.5\" --output-format=json : echo '{\"data\": [{\"slug_perm\": \"bazXXX\"}]}'" \
+         "${CLOUDSMITH} list packages grapl/raw --query=\"name:^baz$ version:^3.4.5$\" --output-format=json : echo '{\"data\": [{\"slug_perm\": \"bazXXX\"}]}'" \
          "${CLOUDSMITH} move --yes grapl/raw/bazXXX releases : echo 'Moved baz'"
 
     run "${PWD}/hooks/command"
     assert_success
 
     assert_output --partial "Promoting packages from grapl/raw to grapl/releases via move"
-    assert_output --partial "Processing query 'name:foo version:1.2.3'"
-    assert_output --partial "Processing query 'name:bar version:2.3.4'"
-    assert_output --partial "Processing query 'name:baz version:3.4.5'"
+    assert_output --partial "Processing query 'name:^foo$ version:^1.2.3$'"
+    assert_output --partial "Processing query 'name:^bar$ version:^2.3.4$'"
+    assert_output --partial "Processing query 'name:^baz$ version:^3.4.5$'"
     assert_output --partial "Moved foo"
     assert_output --partial "Moved bar"
     assert_output --partial "Moved baz"
@@ -124,20 +124,20 @@ EOF
 EOF
 
     stub docker \
-         "${CLOUDSMITH} list packages grapl/raw --query=\"name:file-foo version:1.2.3\" --output-format=json : echo '{\"data\": [{\"slug_perm\": \"fooXXX\"}]}'" \
+         "${CLOUDSMITH} list packages grapl/raw --query=\"name:^file-foo$ version:^1.2.3$\" --output-format=json : echo '{\"data\": [{\"slug_perm\": \"fooXXX\"}]}'" \
          "${CLOUDSMITH} move --yes grapl/raw/fooXXX releases : echo 'Moved foo'" \
-         "${CLOUDSMITH} list packages grapl/raw --query=\"name:file-bar version:2.3.4\" --output-format=json : echo '{\"data\": [{\"slug_perm\": \"barXXX\"}]}'" \
+         "${CLOUDSMITH} list packages grapl/raw --query=\"name:^file-bar$ version:^2.3.4$\" --output-format=json : echo '{\"data\": [{\"slug_perm\": \"barXXX\"}]}'" \
          "${CLOUDSMITH} move --yes grapl/raw/barXXX releases : echo 'Moved bar'" \
-         "${CLOUDSMITH} list packages grapl/raw --query=\"name:file-baz version:3.4.5\" --output-format=json : echo '{\"data\": [{\"slug_perm\": \"bazXXX\"}]}'" \
+         "${CLOUDSMITH} list packages grapl/raw --query=\"name:^file-baz$ version:^3.4.5$\" --output-format=json : echo '{\"data\": [{\"slug_perm\": \"bazXXX\"}]}'" \
          "${CLOUDSMITH} move --yes grapl/raw/bazXXX releases : echo 'Moved baz'"
 
     run "${PWD}/hooks/command"
     assert_success
 
     assert_output --partial "Promoting packages from grapl/raw to grapl/releases via move"
-    assert_output --partial "Processing query 'name:file-foo version:1.2.3'"
-    assert_output --partial "Processing query 'name:file-bar version:2.3.4'"
-    assert_output --partial "Processing query 'name:file-baz version:3.4.5'"
+    assert_output --partial "Processing query 'name:^file-foo$ version:^1.2.3$'"
+    assert_output --partial "Processing query 'name:^file-bar$ version:^2.3.4$'"
+    assert_output --partial "Processing query 'name:^file-baz$ version:^3.4.5$'"
     assert_output --partial "Moved foo"
     assert_output --partial "Moved bar"
     assert_output --partial "Moved baz"

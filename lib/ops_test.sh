@@ -183,8 +183,8 @@ EOF
 
     expected=$(
         cat << EOF
-name:foo version:1.2.3
-name:bar version:2.3.4
+name:^foo$ version:^1.2.3$
+name:^bar$ version:^2.3.4$
 EOF
     )
     output="$(packages_to_queries "${packages}")"
@@ -243,8 +243,8 @@ test_packages_to_queries_works_with_valid_json() {
 
     expected=$(
         cat << EOF
-name:foo version:1.2.3
-name:barf version:4.5.6
+name:^foo$ version:^1.2.3$
+name:^barf$ version:^4.5.6$
 EOF
     )
     actual="$(packages_to_queries '{"foo": "1.2.3", "barf": "4.5.6"}')"
