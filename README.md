@@ -27,7 +27,7 @@ required for the promotion.
 steps:
   - label: ":cloudsmith: Promote Packages for Release"
     plugins:
-      - grapl-security/cloudsmith#v0.1.0:
+      - grapl-security/cloudsmith#v0.1.2:
           promote:
             org: my-company
             from: testing
@@ -45,7 +45,7 @@ workflows.
 steps:
   - label: ":cloudsmith: Promote Packages for Release"
     plugins:
-      - grapl-security/cloudsmith#v0.1.0:
+      - grapl-security/cloudsmith#v0.1.2:
           promote:
             org: my-company
             from: testing
@@ -81,7 +81,7 @@ an `action` of `copy`:
 steps:
   - label: ":cloudsmith: Promote Packages for Release"
     plugins:
-      - grapl-security/cloudsmith#v0.1.0:
+      - grapl-security/cloudsmith#v0.1.2:
           promote:
             org: my-company
             from: testing
