@@ -4,9 +4,9 @@ env:
 
 steps:
 
-  - label: ":lint-roller::bash: Lint Bash"
+  - label: ":lint-roller::bash: Lint Shell"
     command:
-      - make lint-bash
+      - make lint-shell
     plugins:
       - grapl-security/vault-login#v0.1.0
       - grapl-security/vault-env#v0.1.0:
@@ -30,9 +30,9 @@ steps:
     command:
       - make lint-plugin
 
-  - label: ":bash: Unit Test Bash"
+  - label: ":bash: Unit Test Shell"
     command:
-      - make test-bash
+      - make test-shell
     plugins:
       - grapl-security/vault-login#v0.1.0
       - grapl-security/vault-env#v0.1.0:

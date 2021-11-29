@@ -8,21 +8,21 @@ RUN_CHECK := docker-compose run --rm --user=${COMPOSE_USER}
 ########################################################################
 
 .PHONY: format
-format: format-hcl format-bash
+format: format-hcl format-shell
 
 .PHONY: format-hcl
 format-hcl:
 	${RUN_CHECK} hcl-formatter
 
-.PHONY: format-bash
-format-bash:
+.PHONY: format-shell
+format-shell:
 	./pants fmt ::
 
 # Linting
 ########################################################################
 
 .PHONY: lint
-lint: lint-docker lint-hcl lint-bash lint-plugin
+lint: lint-docker lint-hcl lint-shell lint-plugin
 
 .PHONY: lint-docker
 lint-docker:
@@ -32,8 +32,8 @@ lint-docker:
 lint-hcl:
 	${RUN_CHECK} hcl-linter
 
-.PHONY: lint-bash
-lint-bash:
+.PHONY: lint-shell
+lint-shell:
 	./pants filter --target-type=shell_sources,shunit2_tests :: | xargs ./pants lint
 
 .PHONY: lint-plugin
@@ -43,10 +43,10 @@ lint-plugin:
 # Testing
 ########################################################################
 .PHONY: test
-test: test-bash test-plugin
+test: test-shell test-plugin
 
-.PHONY: test-bash
-test-bash:
+.PHONY: test-shell
+test-shell:
 	./pants test ::
 
 .PHONY: test-plugin
