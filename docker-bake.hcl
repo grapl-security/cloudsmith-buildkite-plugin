@@ -3,7 +3,7 @@ group "default" {
 }
 
 variable "CLOUDSMITH_CLI_VERSION" {
-  default = "0.31.1"
+  default = "0.32.0"
 }
 
 target "cloudsmith-cli" {
