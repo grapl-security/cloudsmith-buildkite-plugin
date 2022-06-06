@@ -31,11 +31,11 @@ steps:
         command:
           - docker buildx bake ${pipeline}-${action}-image --file=docker-bake.testing.hcl --push
         plugins:
-          - grapl-security/vault-login#v0.1.0
+          - grapl-security/vault-login#v0.1.2
           - grapl-security/vault-env#v0.1.0:
               secrets:
                 - CLOUDSMITH_API_KEY
-          - docker-login#v2.0.1:
+          - docker-login#v2.1.0:
               username: grapl-cicd
               password-env: CLOUDSMITH_API_KEY
               server: docker.cloudsmith.io
@@ -46,7 +46,7 @@ steps:
         key: promotion-${action}-test
         depends_on: test-${action}-upload
         plugins:
-          - grapl-security/vault-login#v0.1.0
+          - grapl-security/vault-login#v0.1.2
           - grapl-security/vault-env#v0.1.0:
               secrets:
                 - CLOUDSMITH_API_KEY
@@ -82,7 +82,7 @@ cat << EOF
         command:
           - .buildkite/scripts/verify_promotion.sh "cloudsmith-buildkite-plugin-${pipeline}-${action}-test" "${action}"
         plugins:
-          - grapl-security/vault-login#v0.1.0
+          - grapl-security/vault-login#v0.1.2
           - grapl-security/vault-env#v0.1.0:
               secrets:
                 - CLOUDSMITH_API_KEY
