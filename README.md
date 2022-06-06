@@ -159,7 +159,7 @@ Cannot be used if `packages` is used.
 
 ## Building
 
-Requires `make`, `docker`, and `docker-compose`.
+Requires `make`, `docker`, and Docker Compose v2.
 
 Running `make` will run all formatting, linting, and testing.
 

@@ -24,32 +24,34 @@ fi
 cat << EOF
 ---
 steps:
-  - label: ":cloudsmith::docker: Upload '${action}' container"
-    key: test-${action}-upload
-    command:
-      - docker buildx bake ${pipeline}-${action}-image --file=docker-bake.testing.hcl --push
-    plugins:
-      - grapl-security/vault-login#v0.1.0
-      - grapl-security/vault-env#v0.1.0:
-          secrets:
-            - CLOUDSMITH_API_KEY
-      - docker-login#v2.0.1:
-          username: grapl-cicd
-          password-env: CLOUDSMITH_API_KEY
-          server: docker.cloudsmith.io
-    agents:
-      queue: "docker"
+  - group: ":hammer_and_wrench: Integration Tests"
+    steps:
+      - label: ":cloudsmith::docker: Upload '${action}' container"
+        key: test-${action}-upload
+        command:
+          - docker buildx bake ${pipeline}-${action}-image --file=docker-bake.testing.hcl --push
+        plugins:
+          - grapl-security/vault-login#v0.1.2
+          - grapl-security/vault-env#v0.1.0:
+              secrets:
+                - CLOUDSMITH_API_KEY
+          - docker-login#v2.1.0:
+              username: grapl-cicd
+              password-env: CLOUDSMITH_API_KEY
+              server: docker.cloudsmith.io
+        agents:
+          queue: "docker"
 
-  - label: ":cloudsmith::buildkite: Promote via ${action}"
-    key: promotion-${action}-test
-    depends_on: test-${action}-upload
-    plugins:
-      - grapl-security/vault-login#v0.1.0
-      - grapl-security/vault-env#v0.1.0:
-          secrets:
-            - CLOUDSMITH_API_KEY
-      - grapl-security/cloudsmith#${BUILDKITE_COMMIT}:
-          promote:
+      - label: ":cloudsmith::buildkite: Promote via ${action}"
+        key: promotion-${action}-test
+        depends_on: test-${action}-upload
+        plugins:
+          - grapl-security/vault-login#v0.1.2
+          - grapl-security/vault-env#v0.1.0:
+              secrets:
+                - CLOUDSMITH_API_KEY
+          - grapl-security/cloudsmith#${BUILDKITE_COMMIT}:
+              promote:
 EOF
 
 if [ "${pipeline}" = "merge" ]; then
@@ -59,32 +61,32 @@ if [ "${pipeline}" = "merge" ]; then
     # NOTE: The spacing in this heredoc is *important* because it's
     # YAML
     cat << EOF
-            image: docker.cloudsmith.io/grapl/raw/cloudsmith-cli
-            tag: latest
+                image: docker.cloudsmith.io/grapl/raw/cloudsmith-cli
+                tag: latest
 EOF
 fi
 
 cat << EOF
-            org: grapl
-            action: ${action}
-            from: testing-stage1
-            to: testing-stage2
-            packages:
-              cloudsmith-buildkite-plugin-${pipeline}-${action}-test: ${BUILDKITE_BUILD_ID}
-    agents:
-      queue: "docker"
+                org: grapl
+                action: ${action}
+                from: testing-stage1
+                to: testing-stage2
+                packages:
+                  cloudsmith-buildkite-plugin-${pipeline}-${action}-test: ${BUILDKITE_BUILD_ID}
+        agents:
+          queue: "docker"
 
-  - label: ":cloudsmith::white_check_mark: Verify ${action}"
-    key: verify-promotion-${action}
-    depends_on: promotion-${action}-test
-    command:
-      - .buildkite/scripts/verify_promotion.sh "cloudsmith-buildkite-plugin-${pipeline}-${action}-test" "${action}"
-    plugins:
-      - grapl-security/vault-login#v0.1.0
-      - grapl-security/vault-env#v0.1.0:
-          secrets:
-            - CLOUDSMITH_API_KEY
-    agents:
-      queue: "docker"
+      - label: ":cloudsmith::white_check_mark: Verify ${action}"
+        key: verify-promotion-${action}
+        depends_on: promotion-${action}-test
+        command:
+          - .buildkite/scripts/verify_promotion.sh "cloudsmith-buildkite-plugin-${pipeline}-${action}-test" "${action}"
+        plugins:
+          - grapl-security/vault-login#v0.1.2
+          - grapl-security/vault-env#v0.1.0:
+              secrets:
+                - CLOUDSMITH_API_KEY
+        agents:
+          queue: "docker"
 
 EOF
