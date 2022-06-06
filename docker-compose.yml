@@ -38,6 +38,6 @@ services:
       - *read-only-plugin
 
   plugin-tester:
-    image: buildkite/plugin-tester:latest # the only available tag
+    image: buildkite/plugin-tester:v2.0.0
     volumes:
       - *read-only-plugin
