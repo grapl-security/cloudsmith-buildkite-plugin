@@ -36,6 +36,6 @@ services:
       - *read-only-plugin
 
   plugin-tester:
-    image: buildkite/plugin-tester:v3.0.0
+    image: buildkite/plugin-tester:v3.0.1
     volumes:
       - *read-only-plugin
