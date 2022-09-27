@@ -32,7 +32,7 @@ steps:
           - docker buildx bake ${pipeline}-${action}-image --file=docker-bake.testing.hcl --push
         plugins:
           - grapl-security/vault-login#v0.1.3
-          - grapl-security/vault-env#v0.1.0:
+          - grapl-security/vault-env#v0.2.0:
               secrets:
                 - CLOUDSMITH_API_KEY
           - docker-login#v2.1.0:
@@ -47,7 +47,7 @@ steps:
         depends_on: test-${action}-upload
         plugins:
           - grapl-security/vault-login#v0.1.3
-          - grapl-security/vault-env#v0.1.0:
+          - grapl-security/vault-env#v0.2.0:
               secrets:
                 - CLOUDSMITH_API_KEY
           - grapl-security/cloudsmith#${BUILDKITE_COMMIT}:
@@ -83,7 +83,7 @@ cat << EOF
           - .buildkite/scripts/verify_promotion.sh "cloudsmith-buildkite-plugin-${pipeline}-${action}-test" "${action}"
         plugins:
           - grapl-security/vault-login#v0.1.3
-          - grapl-security/vault-env#v0.1.0:
+          - grapl-security/vault-env#v0.2.0:
               secrets:
                 - CLOUDSMITH_API_KEY
         agents:
