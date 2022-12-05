@@ -6,17 +6,21 @@ load "$BATS_PLUGIN_PATH/load.bash"
 # export DOCKER_STUB_DEBUG=/dev/tty
 
 # The constant part of the Docker `cloudsmith` invocation; useful for stubbing
-readonly CLOUDSMITH="run --init --rm --env=CLOUDSMITH_API_KEY -- docker.cloudsmith.io/grapl/releases/cloudsmith-cli:latest"
+readonly CLOUDSMITH="run --init --rm --env=CLOUDSMITH_API_KEY -- docker.mycompany.com/cloudsmith-cli:latest"
 
 setup() {
     TEMPFILE=$(mktemp /tmp/tempfile.json.XXXXXX)
     export TEMPFILE
+
+    export BUILDKITE_PLUGIN_CLOUDSMITH_IMAGE="docker.mycompany.com/cloudsmith-cli"
 }
 
 teardown() {
     unset BUILDKITE_PLUGINS
     rm -f "${TEMPFILE}"
     unset TEMPFILE
+
+    unset BUILDKITE_PLUGIN_CLOUDSMITH_IMAGE
 }
 
 @test "works with a single package" {
@@ -24,6 +28,7 @@ teardown() {
 [
   {
     "grapl-security/cloudsmith-buildkite-plugin#deadbeef": {
+      "image": "docker.mycompany.com/cloudsmith-cli",
       "promote": {
         "org": "grapl",
         "from": "raw",
@@ -58,6 +63,7 @@ EOF
 [
   {
     "grapl-security/cloudsmith-buildkite-plugin#deadbeef": {
+      "image": "docker.mycompany.com/cloudsmith-cli",
       "promote": {
         "org": "grapl",
         "from": "raw",
@@ -102,6 +108,7 @@ EOF
 [
   {
     "grapl-security/cloudsmith-buildkite-plugin#deadbeef": {
+      "image": "docker.mycompany.com/cloudsmith-cli",
       "promote": {
         "org": "grapl",
         "from": "raw",
