@@ -1,5 +1,16 @@
 # Cloudsmith Buildkite Plugin
 
+:warning: **Sunsetting This Repository** :warning:
+
+Work has stopped on this plugin. The repository will still be
+available in an archived state, but users are encouraged to either
+fork a copy or find alternatives. The `cloudsmith-cli` container image we
+provided will no longer be available, but you can use an alternative
+or build your own from this repository (the `ENTRYPOINT` _must_ be
+`cloudsmith`). If you continue using the code from this repository, you
+will need to specify an `image` in your plugin configuration (see
+below).
+
 Interact with [Cloudsmith](https://cloudsmith.io) package
 repositories.
 
@@ -28,6 +39,7 @@ steps:
   - label: ":cloudsmith: Promote Packages for Release"
     plugins:
       - grapl-security/cloudsmith#v0.1.4:
+          image: docker.mycompany.com/cloudsmith-cli
           promote:
             org: my-company
             from: testing
@@ -46,6 +58,7 @@ steps:
   - label: ":cloudsmith: Promote Packages for Release"
     plugins:
       - grapl-security/cloudsmith#v0.1.4:
+          image: docker.mycompany.com/cloudsmith-cli
           promote:
             org: my-company
             from: testing
@@ -82,6 +95,7 @@ steps:
   - label: ":cloudsmith: Promote Packages for Release"
     plugins:
       - grapl-security/cloudsmith#v0.1.4:
+          image: docker.mycompany.com/cloudsmith-cli
           promote:
             org: my-company
             from: testing
@@ -91,27 +105,13 @@ steps:
               frontend: v1.2.3
               backend: v2.3.4
 ```
-
-## Docker Image
-
-For flexibility, this plugin uses a containerized Cloudsmith CLI,
-meaning that you can use this plugin directly, without having to
-install the CLI on your Buildkite agents.
-
-Since there is not currently an official Cloudsmith CLI container
-image, we [build one ourselves](./Dockerfile) and make it available
-for this plugin. The image can be overridden, however, if you wish to
-use a different one; see the `Configuration` section below.
-
 ## Configuration
 
-### image (optional, string)
+### image (required, string)
 
 The container image with the Cloudsmith CLI binary that the plugin
 uses. Any container used should have the `cloudsmith` binary as its
 entrypoint.
-
-Defaults to `docker.cloudsmith.io/grapl/releases/cloudsmith-cli`.
 
 ### tag (optional, string)
 
